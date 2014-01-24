@@ -2,6 +2,7 @@ import struct
 import hashlib
 from ctypes import *
 import math
+import threading
 
 def uint32(x):
 	return x & 0xffffffffL
@@ -57,7 +58,7 @@ def search(blockbin,target):
 	};
 	"""
 	ret = hHash.scanhash_sse2_64(byref(buff2))
-	print "ret=%d" % ret
+	#print "ret=%d" % ret
 	if ret!=-1:
 		buf = bytearray(buff2)
 
@@ -86,3 +87,27 @@ def search(blockbin,target):
 	newnonce=lastnonce[0]+1000000
 	blockbin,off = packInt(blockbin,76,newnonce)
 	return (ret,0)
+
+class xmStep1(threading.Thread):
+	def __init__(self,inQ,outQ):
+		threading.Thread.__init__(self)
+		self.inQ=inQ
+		self.outQ=outQ
+
+	def run(self):
+		while(1):
+			while( not self.outQ.empty() ):
+				set.outQ.get_nowait()
+			block=bytearray(self.inQ.get())
+			target=9
+			(nonce,mul)=search(block,target)
+			while( self.inQ.empty() ):
+				if nonce!=-1:			
+					b=bytearray(block)
+					self.outQ.put((b,mul))
+				#target=target+1
+				lastnonce=struct.unpack("I",block[76:80])
+				newnonce=lastnonce[0]+1
+				block,off = packInt(block,76,newnonce)
+				(nonce,mul)=search(block,target)
+		

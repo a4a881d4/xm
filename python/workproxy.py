@@ -80,20 +80,15 @@ if __name__=='__main__':
 	import xmStep1
 	s = proxySock()
 	s.connect()
-	q=Queue()
-	recvThread=proxyRecv(s,q)
+	workQ=Queue()
+	hashQ=Queue()
+	recvThread=proxyRecv(s,workQ)
+	hashThread=xmStep1.xmStep1(workQ,hashQ)
 	recvThread.start()
+	hashThread.start()
 	while(1):
-		block=bytearray(q.get())
-		target=9
-		(nonce,mul)=xmStep1.search(block,target)
-		while( q.empty() ):
-			if nonce!=-1:			
-				print "Target=%d" % target
-				xmStep1.check(mul)
-				#target=target+1
-			(nonce,mul)=xmStep1.search(block,target)
-		
+		(block,mul)=hashQ.get()
+		print mul
 		
 
 
