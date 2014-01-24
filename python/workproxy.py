@@ -5,8 +5,9 @@ import time
 from Queue import Queue
 import threading
 
-class proxyRecv:
+class proxyRecv(threading.Thread):
 	def __init__(self,sock,q):
+		threading.Thread.__init__(self)
 		self.s=sock
 		self.q=q
 
@@ -18,8 +19,8 @@ class proxyRecv:
 			print mesType
 			if mesType[0]==0:
 				blockBin=s.recv(128)
-				print "Block:"
-				print repr(blockBin)
+				print "Block:recv"
+				self.q.put(blockBin)
 				#block.header,block.nNonce,block.primemultiplier = struct.unpack("76BI48B",blockBin)
 			if mesType[0]==1:
 				ret=struct.unpack("I",s.recv(4))
@@ -68,23 +69,32 @@ class proxySock:
 			, 0
 		)
 
-		print len(Hello)
-
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.s.connect((self.HOST, self.PORT))
-
 		hs = self.s.send(Hello)
-		print hs
-
+		
 	def recv(self,num):
 		return self.s.recv(num)
 
 if __name__=='__main__':
+	import xmStep1
 	s = proxySock()
 	s.connect()
 	q=Queue()
 	recvThread=proxyRecv(s,q)
-	recvThread.run()
+	recvThread.start()
+	while(1):
+		block=bytearray(q.get())
+		target=9
+		(nonce,mul)=xmStep1.search(block,target)
+		while( q.empty() ):
+			if nonce!=-1:			
+				print "Target=%d" % target
+				xmStep1.check(mul)
+				#target=target+1
+			(nonce,mul)=xmStep1.search(block,target)
+		
+		
 
 
 
