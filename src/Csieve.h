@@ -348,6 +348,14 @@ public:
 
 	void prepare()
 	{
+		nCandidateIndex = 0;
+		nPrimeSeq = 0;
+		nCandidateCount = 0;
+		nCandidateMultiplier = 0;
+		nCandidateIndex = 0;
+		fCandidateIsExtended = false;
+		nCandidateActiveExtension = 0;
+
         memset(vfCandidates, 0, nCandidatesBytes);
         memset(vfCompositeBiTwin, 0, nCandidatesBytes);
         memset(vfCompositeCunningham1, 0, nCandidatesBytes);
@@ -395,8 +403,10 @@ public:
 	        if (nFixedFactorMod == 0)
 	        {
 	            // Nothing in the sieve is divisible by this prime
+							//printf("0");
 	            continue;
 	        }
+					//printf("*");
 	        // Find the modulo inverse of fixed factor
 	        unsigned int nFixedInverse = int_invert(nFixedFactorMod, nPrime);
 	        if (!nFixedInverse) {

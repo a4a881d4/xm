@@ -10,6 +10,10 @@ work/sha256_sse2_amd64.o:src/sha256_sse2_amd64.cpp
 work/libsha256.so:work/sha256_sse2_amd64.o work/sha256_xmm_amd64.o
 	ld -shared -L /usr/lib/gcc/x86_64-linux-gnu/4.8 -lcrypto -lgmp -lssl -lstdc++ -o work/libsha256.so work/sha256_sse2_amd64.o work/sha256_xmm_amd64.o
 
-so:work/libsha256.so
+work/libprime.so:src/xmStep2.cpp src/prime.cpp
+	g++ -fPIC -shared -lgmp -o work/libprime.so src/xmStep2.cpp src/prime.cpp
+
+
+so:work/libsha256.so work/libprime.so
 
 
