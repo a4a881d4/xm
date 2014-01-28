@@ -1,31 +1,35 @@
 #include <stdlib.h>
 #include "Csieve.h"
-std::vector<unsigned int> vPrimes;
+
 unsigned int nSieveSize = 1000000;
 unsigned int nSievePercentage = 10;
 unsigned int nSieveExtensions = 9;
 CSieveOfEratosthenes *ps;
-uint256 h;
+uint256 *pH;
 uint64_t nFix;
-
+extern "C" {
 void *init() 
 {
-	GeneratePrimeTable();
 	ps = new CSieveOfEratosthenes(nSieveSize, nSievePercentage, nSieveExtensions, 7);
 	return (void *)ps;
+	pH = NULL;
 }
 
 void Weave( void *hash, uint64_t nfix, uint32_t start, bool *pStop )
 {
-	h = uint256( (unsigned char *)hash );
+	if( pH!=NULL )
+		delete pH;
+	pH = new uint256( (unsigned char *)hash );
 	nFix = nfix;
-	ps->Weave( h, nFix, start, *pStop );
+	ps->Weave( *pH, nFix, start, *pStop );
 }
 
-uint64_t getNext(uint64_t mul,unsigned int type)
+uint64_t getNext()
 {
+	uint64_t mul;
+	unsigned int type;
 	while( ps->GetNextCandidateMultiplier(mul,type) ) {
-			unsigned int len = PrimeChainTest(h, nFix, mul, type);
+			unsigned int len = PrimeChainTest(*pH, nFix, mul, type);
 			if( len !=0 ) {
 				printf("%s:%d - %lld\n",(type==PRIME_CHAIN_CUNNINGHAM1)? "1CC" : ((type==PRIME_CHAIN_CUNNINGHAM2)? "2CC" : "TWN"),len,mul);
 				if( len>=6 )
@@ -34,7 +38,7 @@ uint64_t getNext(uint64_t mul,unsigned int type)
 		}
 	return 0;
 }
-
+}
 #ifdef SELFTEST 
 int main()
 {

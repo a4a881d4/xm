@@ -78,17 +78,21 @@ class proxySock:
 
 if __name__=='__main__':
 	import xmStep1
+	import xmStep2
 	s = proxySock()
 	s.connect()
 	workQ=Queue()
 	hashQ=Queue()
+	chainQ=Queue()
 	recvThread=proxyRecv(s,workQ)
 	hashThread=xmStep1.xmStep1(workQ,hashQ)
+	primeThread=xmStep2.xmStep2(hashQ,chainQ)
 	recvThread.start()
 	hashThread.start()
+	primeThread.start()
 	while(1):
-		(block,mul)=hashQ.get()
-		print mul
+		(block,nFix,nTry)=chainQ.get()
+		print nTry
 		
 
 

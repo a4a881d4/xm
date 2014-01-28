@@ -36,7 +36,7 @@ def check(a):
 	for x in [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61]:
 		print "%d check %d" % (x, a%x )
 			
-def search(blockbin,target):
+def testSearch(blockbin,target):
 	block=bytearray(blockbin[0:80])
 	hHash = CDLL('work/libsha256.so')
 
@@ -93,14 +93,35 @@ class xmStep1(threading.Thread):
 		threading.Thread.__init__(self)
 		self.inQ=inQ
 		self.outQ=outQ
+		self.hHash = CDLL('work/libsha256.so')
+
+	def search(self,blockbin,target):
+		block=bytearray(blockbin[0:80])
+		buf = bytearray(128+32+4+4+8+8)
+		for i in range(0,80):
+			buf[i] = blockbin[i]
+
+		struct.pack_into('II',buf,128+32,1000000,target)
+
+		buff2 = (c_char * len(buf)).from_buffer(buf)
+		ret = self.hHash.scanhash_sse2_64(byref(buff2))
+		if ret!=-1:
+			buf = bytearray(buff2)
+			mul = struct.unpack("q",buf[128+32+8:128+32+16])
+			blockbin,off = packInt(blockbin,76,ret&0xffffffff)
+			return (ret,mul[0])
+		lastnonce=struct.unpack("I",buf[76:80])
+		newnonce=lastnonce[0]+1000000
+		blockbin,off = packInt(blockbin,76,newnonce)
+		return (ret,0)
 
 	def run(self):
 		while(1):
 			while( not self.outQ.empty() ):
-				set.outQ.get_nowait()
+				self.outQ.get_nowait()
 			block=bytearray(self.inQ.get())
 			target=9
-			(nonce,mul)=search(block,target)
+			(nonce,mul)=self.search(block,target)
 			while( self.inQ.empty() ):
 				if nonce!=-1:			
 					b=bytearray(block)
@@ -109,5 +130,5 @@ class xmStep1(threading.Thread):
 				lastnonce=struct.unpack("I",block[76:80])
 				newnonce=lastnonce[0]+1
 				block,off = packInt(block,76,newnonce)
-				(nonce,mul)=search(block,target)
+				(nonce,mul)=self.search(block,target)
 		
