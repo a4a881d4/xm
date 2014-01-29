@@ -41,7 +41,7 @@ uint64_t getNext(void *pSclass)
 			if( len>0 )
 				cp++;
 	}
-	printf("find %d:%d\n",cc,cp);
+	//printf("find %d:%d\n",cc,cp);
 	return 0;
 }
 }

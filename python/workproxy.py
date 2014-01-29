@@ -2,7 +2,7 @@ import socket
 import struct
 import hashlib
 import time
-from Queue import Queue
+from Queue import Queue,PriorityQueue
 import threading
 
 class proxyRecv(threading.Thread):
@@ -96,12 +96,12 @@ if __name__=='__main__':
 	s = proxySock()
 	s.connect()
 	workQ=Queue()
-	hashQ=Queue()
+	hashQ=PriorityQueue()
 	chainQ=Queue()
 	recvThread=proxyRecv(s,workQ)
 	hashThread=xmStep1.xmStep1(workQ,hashQ)
 	workers=[]
-	for i in range(0,3):
+	for i in range(0,4):
 		primeThread=xmStep2.xmStep2(hashQ,chainQ)
 		workers.append(primeThread)
 	recvThread.start()

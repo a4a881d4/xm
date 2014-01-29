@@ -45,12 +45,12 @@ class xmStep2(threading.Thread):
 		self.inQ=inQ
 		self.outQ=outQ
 		self.prime = CDLL('work/libprime.so')
-		self.nSieveSize=5000000
-		self.pSclass = self.prime.init(c_uint(self.nSieveSize),10,9,8)
+		self.nSieveSize=3000000
+		self.pSclass = self.prime.init(c_uint(self.nSieveSize),10,9,7)
 
 	def run(self):
 		while(1):
-			(block,mul)=self.inQ.get()
+			(mul,block)=self.inQ.get()
 			m = hashlib.sha256()
 			m.update(block[0:80])
 			hash1 = m.digest()

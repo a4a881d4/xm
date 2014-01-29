@@ -120,18 +120,15 @@ class xmStep1(threading.Thread):
 			while( not self.outQ.empty() ):
 				self.outQ.get_nowait()
 			block=bytearray(self.inQ.get())
-			target=8
+			target=7
 			(nonce,mul)=self.search(block,target)
 			while( self.inQ.empty() ):
+				#print "q len %d" % self.outQ.qsize()
 				if nonce!=-1:
 					b=bytearray(len(block))			
 					b[:]=block
-					self.outQ.put((b,mul))
-					if (mul%61)==0:
-						mul/=61
-						b=bytearray(len(block))			
-						b[:]=block
-						self.outQ.put((b,mul))
+					self.outQ.put((mul,b))
+					
 				#target=target+1
 				lastnonce=struct.unpack("I",block[76:80])
 				newnonce=lastnonce[0]+1
