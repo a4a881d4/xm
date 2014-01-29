@@ -23,4 +23,8 @@ work/libprime.so:work/xmStep2.o work/prime.o
 
 so:work/libsha256.so work/libprime.so
 
+work/testv:src/xmStep2.cpp src/prime.cpp
+	g++ -DSELFTEST -o work/test src/xmStep2.cpp src/prime.cpp -lgmp
+
+
 

@@ -7,6 +7,7 @@
 
 
 typedef unsigned long sieve_word_t;
+const uint32_t smallPrimes[20]={2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71};
 
 // Sieve of Eratosthenes for proof-of-work mining
 //
@@ -27,6 +28,7 @@ typedef unsigned long sieve_word_t;
 // efficiently because the layers overlap.
 class CSieveOfEratosthenes
 {
+	public:
     unsigned int nSieveSize; // size of the sieve
     unsigned int nSievePercentage; // weave up to a percentage of primes
     unsigned int nSieveExtensions; // extend the sieve a given number of times
@@ -66,7 +68,10 @@ class CSieveOfEratosthenes
 	unsigned int *vCunningham2Multipliers;
 	sieve_word_t *vfCompositeLayerCC1;
 	sieve_word_t *vfCompositeLayerCC2;
+
 	std::vector<unsigned int> vPrimes;
+	uint256 hash;
+	uint64_t nFix;
 
 	void GeneratePrimeTable()
 	{
@@ -147,6 +152,8 @@ public:
         vfExtendedCompositeCunningham2 = (sieve_word_t *)malloc(nSieveExtensions * nCandidatesBytes);
         nSieveLayers = nChainLength + nSieveExtensions;
 
+			GeneratePrimeTable();
+	
         // Process only a set percentage of the primes
         // Most composites are still found
         const unsigned int nTotalPrimes = vPrimes.size();
@@ -156,7 +163,7 @@ public:
 	    vCunningham2Multipliers = (unsigned int *)malloc(nMultiplierBytes);
 		vfCompositeLayerCC1 = (sieve_word_t *)malloc(nCandidatesBytes);
 	    vfCompositeLayerCC2 = (sieve_word_t *)malloc(nCandidatesBytes);
-			GeneratePrimeTable();
+			
     }
 
     ~CSieveOfEratosthenes()
@@ -317,11 +324,7 @@ public:
     }
 
     // Get progress percentage of the sieve
-    unsigned int GetProgressPercentage()
-	{
-	    return std::min(100u, (((nPrimeSeq >= vPrimes.size())? nSieveSize : vPrimes[nPrimeSeq]) * 100 / nSieveSize));
-	}
-	
+  	
 	unsigned int int_invert(unsigned int a, unsigned int nPrime)
 	{
 	    // Extended Euclidean algorithm to calculate the inverse of a in finite field defined by nPrime
@@ -367,7 +370,6 @@ public:
 
 	void prepare()
 	{
-		nCandidateIndex = 0;
 		nPrimeSeq = 0;
 		nCandidateCount = 0;
 		nCandidateMultiplier = 0;
@@ -388,6 +390,21 @@ public:
 	    memset(vCunningham1Multipliers, 0xFF, nMultiplierBytes);
 	    memset(vCunningham2Multipliers, 0xFF, nMultiplierBytes);
 	}
+
+static void checkHash( mpz_class &hash,uint64_t mul,int thread_id )
+{
+	//printf("thread [%d,%20lld] check:",thread_id,(long long int)mul);
+	//	if( mpz_divisible_ui_p(hash.get_mpz_t(),210) ) printf("0"); else printf("*");
+	for( int i=0;i<20;i++ )
+		if( (mpz_divisible_ui_p(hash.get_mpz_t(), smallPrimes[i])) || (mul%smallPrimes[i])==0 ) printf("0"); else printf("*");
+	/*		
+	printf("-");
+	for( int i=0;i<11;i++ )
+		if( (mul%smallPrimes[i])==0 ) printf("0"); else printf("*");
+	*/
+	printf("\n");
+}
+
     // Weave the sieve for the next prime in table
     // Return values:
     //   True  - weaved another prime; nComposite - number of composites removed
@@ -396,6 +413,11 @@ public:
 	{
 		nStart = start;
         prepare();
+/*		
+		mpz_class mpzHash;
+		mpz_set_uint256(mpzHash.get_mpz_t(), hash);
+		checkHash(mpzHash,nFixedMultiplier,0);
+*/
 	    unsigned int nCombinedEndSeq = 1;
 	    unsigned int nFixedFactorCombinedMod = 0;
 
@@ -403,6 +425,7 @@ public:
 	    {
 	        if (stop)
 	            break;  // new block
+					
 	        unsigned int nPrime = vPrimes[nPrimeSeqLocal];
 	        if (nPrimeSeqLocal >= nCombinedEndSeq)
 	        {

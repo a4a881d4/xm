@@ -5,9 +5,6 @@
 
 
 extern std::vector<unsigned int> vPrimes;
-extern unsigned int nSieveExtensions;
-extern unsigned int nSievePercentage;
-extern unsigned int nSieveSize;
 static const mpz_class mpzOne = 1;
 static const mpz_class mpzTwo = 2;
 // Generate small prime table
@@ -19,7 +16,6 @@ enum // prime chain type
     PRIME_CHAIN_CUNNINGHAM2 = 2u,
     PRIME_CHAIN_BI_TWIN     = 3u,
 };
-
 
 
 inline void mpz_set_uint256(mpz_t r, uint256& u)

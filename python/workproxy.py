@@ -24,14 +24,14 @@ class proxyRecv(threading.Thread):
 				#block.header,block.nNonce,block.primemultiplier = struct.unpack("76BI48B",blockBin)
 			if mesType[0]==1:
 				ret=struct.unpack("I",s.recv(4))
-				print "server return %d",ret
+				print "server return %d" % ret[0]
 			time.sleep(10)
 
 class proxySock:
 	def __init__(self):
-		self.HOST = "162.243.41.59"
+		self.HOST = "162.243.113.54"
 		self.PORT = 8336
-		self.POOLER = "DLsvbQLXQBEWxynZaus7vaHqLny1TTDtkt.Test"
+		self.POOLER = "BZQf3meU1Dei28KpTnknNKTCZJEZe5Jsct.Test"
 		self.PASSWD = "0"
 		self.VERSION_MAJOR = 0
 		self.VERSION_MINOR = 9
@@ -76,6 +76,20 @@ class proxySock:
 	def recv(self,num):
 		return self.s.recv(num)
 
+	def submit(self,block,nFix,nTry):
+		n = nFix*nTry
+		b = bytearray(128)
+		b[:] = block
+		i=81
+		while(i<128):
+			b[i]=n%256
+			n/=256
+			i+=1
+			if n==0:
+				break
+		b[80]=i-80
+		hs = self.s.send(b)
+
 if __name__=='__main__':
 	import xmStep1
 	import xmStep2
@@ -86,12 +100,17 @@ if __name__=='__main__':
 	chainQ=Queue()
 	recvThread=proxyRecv(s,workQ)
 	hashThread=xmStep1.xmStep1(workQ,hashQ)
-	primeThread=xmStep2.xmStep2(hashQ,chainQ)
+	workers=[]
+	for i in range(0,3):
+		primeThread=xmStep2.xmStep2(hashQ,chainQ)
+		workers.append(primeThread)
 	recvThread.start()
 	hashThread.start()
-	primeThread.start()
+	for primeThread in workers:
+		primeThread.start()
 	while(1):
 		(block,nFix,nTry)=chainQ.get()
+		s.submit(block,nFix,nTry)
 		print nTry
 		
 

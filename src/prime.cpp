@@ -197,7 +197,6 @@ unsigned int PrimeChainTest(uint256& hash, uint64_t nFix, uint64_t nTry, unsigne
         printf("Probable prime chain found =%s!!\n Chain: %s:%d\n", mpzChainOrigin.get_str().c_str()
 			, (nCandidateType==PRIME_CHAIN_CUNNINGHAM1)? "1CC" : ((nCandidateType==PRIME_CHAIN_CUNNINGHAM2)? "2CC" : "TWN")
 			, nChainLength);
-        return nChainLength;
     }
-	return 0;
+	return nChainLength;
 }

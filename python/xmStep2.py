@@ -45,7 +45,8 @@ class xmStep2(threading.Thread):
 		self.inQ=inQ
 		self.outQ=outQ
 		self.prime = CDLL('work/libprime.so')
-		self.prime.init()
+		self.nSieveSize=5000000
+		self.pSclass = self.prime.init(c_uint(self.nSieveSize),10,9,8)
 
 	def run(self):
 		while(1):
@@ -56,16 +57,19 @@ class xmStep2(threading.Thread):
 			m = hashlib.sha256()
 			m.update(hash1)
 			hash2 = m.digest()
-			bHash = struct.unpack('32B',hash2)
+			bHash = bytearray(hash2)
 			cHash = (c_char * 32).from_buffer(bHash)
-			stop = c_bool( True )
+			stop = c_bool( False )
 			nFix = c_ulonglong(mul)
-			xmStep2.Weave(cHash,nFix,0,byref(stop))
+			start = 0
+			#print repr(bHash)
+			self.prime.Weave(self.pSclass,cHash,nFix,0,byref(stop))
 			while(1):
-				nTry = xmStep2.getNext()
-				if nTry!=0:
-					self.outQ.put((block,mul,int(nTry)))
-				else:
+				nTry = self.prime.getNext(self.pSclass)
+				if nTry==0:
 					break
+				else:
+					self.outQ.put((block,mul,int(nTry)))
+				
 				
 			
