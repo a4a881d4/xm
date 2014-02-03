@@ -31,7 +31,7 @@ class proxySock:
 	def __init__(self):
 		self.HOST = "162.243.41.59"
 		self.PORT = 8336
-		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg.a4"
+		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg.i7"
 		self.PASSWD = "0"
 		self.VERSION_MAJOR = 0
 		self.VERSION_MINOR = 9
@@ -113,7 +113,7 @@ if __name__=='__main__':
 	workers=[]
 	lastChain6=0
 	lastChain7=0
-	for i in range(0,4):
+	for i in range(0,7):
 		primeThread=xmStep2.xmStep2(hashQ,chainQ,i)
 		workers.append(primeThread)
 	recvThread.start()

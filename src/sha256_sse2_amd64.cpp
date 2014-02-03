@@ -106,8 +106,19 @@ inline uint32_t checkInt( __m128i a[8], int j, uint32_t target )
 const uint32_t primesT1=3*5*7;
 const uint32_t primesT2= 2*3*5*7*11*13*17*19*23;
 const uint32_t primesT3= 29*31*37*41*43;
-const uint32_t primesT4= 47*53*59*61;
-
+const uint32_t primesT4= 47;
+inline static uint32_t gcd(uint32_t a,uint32_t b)
+{
+	if(b==0)
+		return a;
+	uint32_t c=a%b;
+	while( c!=0 ) {
+		a=b;
+		b=c;
+		c=a%b;
+	}
+	return b;	
+} 
 extern "C" int scanhash_sse2_64( const void *pWork )
 {
 	int i;
@@ -167,8 +178,10 @@ extern "C" int scanhash_sse2_64( const void *pWork )
 				continue;
 			 {
 				int c = 0;
-				uint64_t mul=1;
+				//uint64_t mul=1;
 				uint32_t T = checkInt(m_4hash,j,primesT2);
+				uint64_t mul=(uint64_t)(primesT2/gcd(primesT2,T));
+				/*
 				if( !(T%2) ) c++; else mul*=2;
 				if( !(T%3) ) c++; else mul*=3;
 				if( !(T%5) ) c++; else mul*=5;
@@ -178,20 +191,21 @@ extern "C" int scanhash_sse2_64( const void *pWork )
 				if( !(T%17) ) c++; else mul*=17;
 				if( !(T%19) ) c++; else mul*=19;
 				if( !(T%23) ) c++; else mul*=23;
+				*/
+				
 				T = checkInt(m_4hash,j,primesT3);
-				if( !(T%29) ) c++; else mul*=29;
-				if( !(T%31) ) c++; else mul*=31;
-				if( !(T%37) ) c++; else mul*=37;
-				if( !(T%41) ) c++; else mul*=41;
-				if( !(T%43) ) c++; else mul*=43;
-			/*
+				mul*=(uint64_t)(primesT3/gcd(primesT3,T));
+				if( mul>(1ULL<<pwork->target) ) continue;
 				T = checkInt(m_4hash,j,primesT4);
-				if( !(T%47) ) c++; else mul*=47;
+				mul*=(uint64_t)(primesT4/gcd(primesT4,T));
+				if( mul>(1ULL<<pwork->target) ) continue;
+			
+		/*	if( !(T%47) ) c++; else mul*=47;
 				if( !(T%53) ) c++; else mul*=53;
 				if( !(T%59) ) c++; else mul*=59;
 				if( !(T%61) ) c++; else mul*=61;
 			*/	
-				if( c>=pwork->target ) { 		
+				if( 1==1 ) { 		
 					*nHashesDone = hc;
 					*nNonce_p = ByteReverse(nonce + j);
 			

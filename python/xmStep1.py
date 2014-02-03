@@ -129,14 +129,17 @@ class xmStep1(threading.Thread):
 			print time.ctime()+" new block"
 			switch=c_bool(True)
 			block=bytearray(self.inQ.get())
-			target=8
+			orgtarget=38
+			target=orgtarget
 			index=0
 			(nonce,mul)=self.search(block,target)
 			while( self.inQ.empty() ):
 				if nonce!=-1:
 					#print "q len %d" % self.outQ.qsize()
-					if( self.outQ.qsize()>32 ):
-						time.sleep(0.01*self.outQ.qsize())
+					if( self.outQ.qsize()>8 ):
+						target=orgtarget-1
+					#	print "target down to %d" % target
+					
 					b=bytearray(len(block))			
 					b[:]=block
 					self.outQ.put((mul,b,index))
