@@ -134,9 +134,9 @@ class xmStep1(threading.Thread):
 			(nonce,mul)=self.search(block,target)
 			while( self.inQ.empty() ):
 				if nonce!=-1:
-					print "q len %d" % self.outQ.qsize()
-					if( self.outQ.qsize()>16 ):
-						time.sleep(0.1*self.outQ.qsize())
+					#print "q len %d" % self.outQ.qsize()
+					if( self.outQ.qsize()>32 ):
+						time.sleep(0.01*self.outQ.qsize())
 					b=bytearray(len(block))			
 					b[:]=block
 					self.outQ.put((mul,b,index))

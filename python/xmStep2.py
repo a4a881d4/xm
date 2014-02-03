@@ -74,9 +74,9 @@ class xmStep2(threading.Thread):
 			self.prime.Weave(self.pSclass,cHash,nFix,0,byref(xmStep1.switch))
 			nRound = float(self.prime.GetCandidateCount(self.pSclass))
 			for i in range(0,6):
-				nRound *= self.EstimateCandidatePrimeProbability(nFix,i)
+				nRound *= self.EstimateCandidatePrimeProbability(mul,i)
 			xmStep1.Chain6+=nRound
-			nRound *= self.EstimateCandidatePrimeProbability(nFix,7)
+			nRound *= self.EstimateCandidatePrimeProbability(mul,7)
 			xmStep1.Chain7+=nRound
 			
 			while(1):
@@ -86,7 +86,7 @@ class xmStep2(threading.Thread):
 				else:
 					self.outQ.put((block,mul,long(nTry)))
 					
-	def EstimateCandidatePrimeProbability(self, nFixed, nChain)
+	def EstimateCandidatePrimeProbability(self, nFixed, nChain):
 		'''
     // h * q# / r# * s is prime with probability 1/log(h * q# / r# * s),
     //   (prime number theorem)
@@ -104,25 +104,21 @@ class xmStep2(threading.Thread):
     // true, but nontheless it's a reasonable model of the chances of finding
     // prime chains.
 		'''
+		sieveSize = float(self.nSieveSize)
 		nSieveWeaveOptimalPrime = self.prime.getNSieveWeaveOptimalPrime(self.pSclass)
-		nAverageCandidateMultiplier = self.nSieveSize / 2
-		dExtendedSieveWeightedSum = 0.5 * self.nSieveSize
-		dExtendedSieveCandidates = self.nSieveSize
-		for i in range(0, nSieveExtensions):
-			dExtendedSieveWeightedSum += 0.75 * (nSieveSize * (2 << i))
-			dExtendedSieveCandidates += nSieveSize / 2
-		dExtendedSieveAverageMultiplier = dExtendedSieveWeightedSum / dExtendedSieveCandidates;
+		nAverageCandidateMultiplier = sieveSize / 2.
+		dExtendedSieveWeightedSum = 0.5 * sieveSize
+		dExtendedSieveCandidates = sieveSize
+		for i in range(0, self.nSieveExtensions):
+			dExtendedSieveWeightedSum += 0.75 * float(self.nSieveSize * (2 << i))
+			dExtendedSieveCandidates += sieveSize / 2.
+		dExtendedSieveAverageMultiplier = dExtendedSieveWeightedSum / dExtendedSieveCandidates
 		dLogTwo = math.log(2.)
 		dLogOneAndHalf = math.log(1.5)
-		up = 1.781072 * math.log(nSieveWeaveOptimalPrime)
-		down = 255.0 * dLogTwo 
-			+ dLogOneAndHalf 
-			+ math.log(nFixed) 
-			+ math.log(nAverageCandidateMultiplier) 
-			+ dLogTwo * nChain
-			+ math.log(dExtendedSieveAverageMultiplier)
+		up = 1.781072 * math.log(float(nSieveWeaveOptimalPrime))
+		down = 255.0 * dLogTwo + dLogOneAndHalf + math.log(float(nFixed)) + math.log(nAverageCandidateMultiplier) + dLogTwo * float(nChain) + math.log(dExtendedSieveAverageMultiplier)
 
-    return up / down
+		return up / down
 			
 				
 			

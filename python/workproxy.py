@@ -111,6 +111,8 @@ if __name__=='__main__':
 	recvThread=proxyRecv(s,workQ)
 	hashThread=xmStep1.xmStep1(workQ,hashQ)
 	workers=[]
+	lastChain6=0
+	lastChain7=0
 	for i in range(0,4):
 		primeThread=xmStep2.xmStep2(hashQ,chainQ,i)
 		workers.append(primeThread)
