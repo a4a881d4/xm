@@ -9,13 +9,39 @@ unsigned int nSievePercentage = 10;
 unsigned int nSieveExtensions = 0;
 */
 
+int cc = 1;
+int cp[10];
 extern "C" {
+void clean()
+{
+	int i;
+	cc=1;
+	for( i=0;i<10;i++ ) cp[i]=0;	
+}
+int chain( int k )
+{
+	return cp[k];	
+}
+int test()
+{
+	return cc;	
+}
 void *init(unsigned int nSieveSize, unsigned int nSievePercentage, unsigned int nSieveExtensions, unsigned int nBit) 
 {
+	clean();
 	CSieveOfEratosthenes *ps = new CSieveOfEratosthenes(nSieveSize, nSievePercentage, nSieveExtensions, nBit);
 	return (void *)ps;
 }
-
+int getNSieveWeaveOptimalPrime( void *pSclass )
+{
+	CSieveOfEratosthenes *ps = (CSieveOfEratosthenes *) pSclass;
+	return ps->getNSieveWeaveOptimalPrime();	
+}
+int GetCandidateCount( void *pSclass )
+{
+	CSieveOfEratosthenes *ps = (CSieveOfEratosthenes *) pSclass;
+	return ps->GetCandidateCount();	
+}
 void Weave( void *pSclass, void *hash, uint64_t nfix, uint32_t start, bool *pStop )
 {
 	CSieveOfEratosthenes *ps = (CSieveOfEratosthenes *) pSclass;
@@ -24,24 +50,32 @@ void Weave( void *pSclass, void *hash, uint64_t nfix, uint32_t start, bool *pSto
 	ps->Weave( ps->hash, ps->nFix, start, *pStop );
 }
 
-uint64_t getNext(void *pSclass)
+uint64_t getNext(void *pSclass, bool& stop)
 {
 	CSieveOfEratosthenes *ps = (CSieveOfEratosthenes *) pSclass;
 	uint64_t mul;
 	unsigned int type;
-	int cc = 0;
-	int cp = 0;
+	int i;
 	while( ps->GetNextCandidateMultiplier(mul,type) ) {
+			if(stop)
+				break;
 			unsigned int len = PrimeChainTest(ps->hash, ps->nFix, mul, type);
 			cc++;
+			if( len<10 )
+				cp[len]++;
 			if( len >=6 ) {
 				printf("%s:%d - %lld - %d e %d s %d - %lld\n",(type==PRIME_CHAIN_CUNNINGHAM1)? "1CC" : ((type==PRIME_CHAIN_CUNNINGHAM2)? "2CC" : "TWN"),len,mul,ps->nCandidateIndex,ps->nCandidateActiveExtension,ps->nStart,((uint64_t)ps->nCandidateIndex+ps->nStart) * (2 << ps->nCandidateActiveExtension));
 					return mul;
 			}
-			if( len>0 )
-				cp++;
+			
 	}
-	//printf("find %d:%d\n",cc,cp);
+	/*
+	printf("find %d-%d: ",cc,cp[1]);
+	for( i=0;i<7;i++ )
+		printf("%d-%d:%le ",i,cp[i],(double)cp[i]/(double)cc);
+	printf("\n");
+	if( cc > 0x1000000 ) clean();
+	*/
 	return 0;
 }
 }

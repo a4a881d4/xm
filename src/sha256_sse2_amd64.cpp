@@ -183,13 +183,14 @@ extern "C" int scanhash_sse2_64( const void *pWork )
 				if( !(T%31) ) c++; else mul*=31;
 				if( !(T%37) ) c++; else mul*=37;
 				if( !(T%41) ) c++; else mul*=41;
-				if( !(T%43) ) c++; else mul*=43;
+			//	if( !(T%43) ) c++; else mul*=43;
+			/*
 				T = checkInt(m_4hash,j,primesT4);
 				if( !(T%47) ) c++; else mul*=47;
 				if( !(T%53) ) c++; else mul*=53;
 				if( !(T%59) ) c++; else mul*=59;
 				if( !(T%61) ) c++; else mul*=61;
-				
+			*/	
 				if( c>=pwork->target ) { 		
 					*nHashesDone = hc;
 					*nNonce_p = ByteReverse(nonce + j);

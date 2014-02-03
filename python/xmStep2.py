@@ -4,6 +4,8 @@ from ctypes import *
 import math
 import threading
 import xmStep1
+import time
+import math
 
 def uint32(x):
 	return x & 0xffffffffL
@@ -40,17 +42,23 @@ def check(a):
 
 
 class xmStep2(threading.Thread):
-	def __init__(self,inQ,outQ):
+	def __init__(self,inQ,outQ,id):
 		threading.Thread.__init__(self)
 		self.inQ=inQ
 		self.outQ=outQ
 		self.prime = CDLL('work/libprime.so')
-		self.nSieveSize=3000000
-		self.pSclass = self.prime.init(c_uint(self.nSieveSize),10,9,7)
-
+		self.nSieveExtensions = 9
+		self.nSievePercentage = 10
+		self.nSieveSize = 1000000
+		self.pSclass = self.prime.init(c_uint(self.nSieveSize),c_uint(self.nSievePercentage),c_uint(self.nSieveExtensions),7)
+		self.ID=id
+		
 	def run(self):
+		#global xmStep1.switch
 		while(1):
-			(mul,block)=self.inQ.get()
+			time.sleep(0.1)
+			(mul,block,index)=self.inQ.get()
+			print time.ctime()+" thread %d get work %d" %(self.ID,index)
 			m = hashlib.sha256()
 			m.update(block[0:80])
 			hash1 = m.digest()
@@ -63,13 +71,58 @@ class xmStep2(threading.Thread):
 			nFix = c_ulonglong(mul)
 			start = 0
 			#print repr(bHash)
-			self.prime.Weave(self.pSclass,cHash,nFix,0,byref(stop))
+			self.prime.Weave(self.pSclass,cHash,nFix,0,byref(xmStep1.switch))
+			nRound = float(self.prime.GetCandidateCount(self.pSclass))
+			for i in range(0,6):
+				nRound *= self.EstimateCandidatePrimeProbability(nFix,i)
+			xmStep1.Chain6+=nRound
+			nRound *= self.EstimateCandidatePrimeProbability(nFix,7)
+			xmStep1.Chain7+=nRound
+			
 			while(1):
-				nTry = self.prime.getNext(self.pSclass)
+				nTry = self.prime.getNext(self.pSclass,byref(xmStep1.switch))
 				if nTry==0:
 					break
 				else:
-					self.outQ.put((block,mul,int(nTry)))
-				
+					self.outQ.put((block,mul,long(nTry)))
+					
+	def EstimateCandidatePrimeProbability(self, nFixed, nChain)
+		'''
+    // h * q# / r# * s is prime with probability 1/log(h * q# / r# * s),
+    //   (prime number theorem)
+    //   here s ~ max sieve size / 2,
+    //   h ~ 2^255 * 1.5,
+    //   r = 7 (primorial multiplier embedded in the hash)
+    // Euler product to p ~ 1.781072 * log(p)   (Mertens theorem)
+    // If sieve is weaved up to p, a number in a candidate chain is a prime
+    // with probability
+    //     (1/log(h * q# / r# * s)) / (1/(1.781072 * log(p)))
+    //   = 1.781072 * log(p) / (255 * log(2) + log(1.5) + log(q# / r#) + log(s))
+    //
+    // This model assumes that the numbers on a chain being primes are
+    // statistically independent after running the sieve, which might not be
+    // true, but nontheless it's a reasonable model of the chances of finding
+    // prime chains.
+		'''
+		nSieveWeaveOptimalPrime = self.prime.getNSieveWeaveOptimalPrime(self.pSclass)
+		nAverageCandidateMultiplier = self.nSieveSize / 2
+		dExtendedSieveWeightedSum = 0.5 * self.nSieveSize
+		dExtendedSieveCandidates = self.nSieveSize
+		for i in range(0, nSieveExtensions):
+			dExtendedSieveWeightedSum += 0.75 * (nSieveSize * (2 << i))
+			dExtendedSieveCandidates += nSieveSize / 2
+		dExtendedSieveAverageMultiplier = dExtendedSieveWeightedSum / dExtendedSieveCandidates;
+		dLogTwo = math.log(2.)
+		dLogOneAndHalf = math.log(1.5)
+		up = 1.781072 * math.log(nSieveWeaveOptimalPrime)
+		down = 255.0 * dLogTwo 
+			+ dLogOneAndHalf 
+			+ math.log(nFixed) 
+			+ math.log(nAverageCandidateMultiplier) 
+			+ dLogTwo * nChain
+			+ math.log(dExtendedSieveAverageMultiplier)
+
+    return up / down
+			
 				
 			

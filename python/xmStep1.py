@@ -3,6 +3,12 @@ import hashlib
 from ctypes import *
 import math
 import threading
+import time
+
+switch=c_bool(True)
+Chain7=0.
+Chain6=0.
+startTime=time.time()
 
 def uint32(x):
 	return x & 0xffffffffL
@@ -116,19 +122,27 @@ class xmStep1(threading.Thread):
 		return (ret,0)
 
 	def run(self):
+		global switch
 		while(1):
 			while( not self.outQ.empty() ):
 				self.outQ.get_nowait()
+			print time.ctime()+" new block"
+			switch=c_bool(True)
 			block=bytearray(self.inQ.get())
-			target=7
+			target=8
+			index=0
 			(nonce,mul)=self.search(block,target)
 			while( self.inQ.empty() ):
-				#print "q len %d" % self.outQ.qsize()
 				if nonce!=-1:
+					print "q len %d" % self.outQ.qsize()
+					if( self.outQ.qsize()>16 ):
+						time.sleep(0.1*self.outQ.qsize())
 					b=bytearray(len(block))			
 					b[:]=block
-					self.outQ.put((mul,b))
-					
+					self.outQ.put((mul,b,index))
+					switch=c_bool(False)
+					index+=1
+				
 				#target=target+1
 				lastnonce=struct.unpack("I",block[76:80])
 				newnonce=lastnonce[0]+1

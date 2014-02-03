@@ -179,7 +179,7 @@ static bool ProbablePrimeChainTestFast(const mpz_class& mpzPrimeChainOrigin, CPr
         }
     }
 
-    return (nChainLength >= 6);
+    return (nChainLength >= 5);
 }
 
 unsigned int PrimeChainTest(uint256& hash, uint64_t nFix, uint64_t nTry, unsigned int nCandidateType)
@@ -200,3 +200,4 @@ unsigned int PrimeChainTest(uint256& hash, uint64_t nFix, uint64_t nTry, unsigne
     }
 	return nChainLength;
 }
+

@@ -181,7 +181,10 @@ public:
 		free(vfCompositeLayerCC1);
 		free(vfCompositeLayerCC2);
     }
-
+		int getNSieveWeaveOptimalPrime()
+		{
+			return vPrimes[(unsigned int) ((uint64) nSievePercentage * vPrimes.size() / 100) - 1];
+		}
     // Get total number of candidates for power test
     unsigned int GetCandidateCount()
     {
@@ -307,9 +310,9 @@ public:
             if (lBits & GetBitMask(nCandidateIndex))
             {
             	if (fCandidateIsExtended)
-                    nCandidateMultiplier = ((uint64_t)nCandidateIndex+nStart) * (2 << nCandidateActiveExtension);
+                    nCandidateMultiplier = ((uint64_t)nCandidateIndex) * (2 << nCandidateActiveExtension);
                 else
-                    nCandidateMultiplier = nCandidateIndex+nStart;
+                    nCandidateMultiplier = nCandidateIndex;
                 nVariableMultiplier = nCandidateMultiplier;
                 if (~vfActiveCompositeTWN[GetWordNum(nCandidateIndex)] & GetBitMask(nCandidateIndex))
                     nCandidateType = PRIME_CHAIN_BI_TWIN;
@@ -411,7 +414,7 @@ static void checkHash( mpz_class &hash,uint64_t mul,int thread_id )
     //   False - sieve already completed
     bool Weave( uint256& hash, unsigned long nFixedMultiplier, uint32_t start, bool& stop )
 	{
-		nStart = start;
+		//nStart = start;
         prepare();
 /*		
 		mpz_class mpzHash;
@@ -458,13 +461,13 @@ static void checkHash( mpz_class &hash,uint64_t mul,int thread_id )
 	        unsigned int nTwoInverse = (nPrime + 1) / 2;
 
 	        // Check whether 32-bit arithmetic can be used for nFixedInverse
-	        const unsigned int nnStart = nPrime-nStart%nPrime;
+	        //const unsigned int nnStart = nPrime-nStart%nPrime;
 	        // Weave the sieve for the prime
 	        for (unsigned int nChainSeq = 0; nChainSeq < nSieveLayers; nChainSeq++)
 	        {
 	        	// Find the first number that's divisible by this prime
-	            vCunningham1Multipliers[nPrimeSeqLocal * nSieveLayers + nChainSeq] = (nFixedInverse+nnStart)%nPrime;
-	            vCunningham2Multipliers[nPrimeSeqLocal * nSieveLayers + nChainSeq] = (nPrime - nFixedInverse+nnStart)%nPrime;
+	            vCunningham1Multipliers[nPrimeSeqLocal * nSieveLayers + nChainSeq] = (nFixedInverse)%nPrime;
+	            vCunningham2Multipliers[nPrimeSeqLocal * nSieveLayers + nChainSeq] = (nPrime - nFixedInverse)%nPrime;
                 // For next number in chain
                 nFixedInverse = (uint64)nFixedInverse * nTwoInverse % nPrime;
             }
@@ -472,7 +475,7 @@ static void checkHash( mpz_class &hash,uint64_t mul,int thread_id )
 
 	    // Number of elements that are likely to fit in L1 cache
 	    // NOTE: This needs to be a multiple of nWordBits
-	    const unsigned int nL1CacheElements = 224000;
+	    const unsigned int nL1CacheElements = 7000;
 	    const unsigned int nArrayRounds = (nSieveSize + nL1CacheElements - 1) / nL1CacheElements;
 
 	    // Calculate the number of CC1 and CC2 layers needed for BiTwin candidates
