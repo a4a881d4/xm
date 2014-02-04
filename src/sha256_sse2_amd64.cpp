@@ -105,8 +105,8 @@ inline uint32_t checkInt( __m128i a[8], int j, uint32_t target )
 	uint32_t max_nonce, unsigned long *nHashesDone) */
 const uint32_t primesT1=3*5*7;
 const uint32_t primesT2= 2*3*5*7*11*13*17*19*23;
-const uint32_t primesT3= 29*31*37*41*43;
-const uint32_t primesT4= 47;
+const uint32_t primesT3= 29*31*37;
+const uint32_t primesT4= 41;
 inline static uint32_t gcd(uint32_t a,uint32_t b)
 {
 	if(b==0)

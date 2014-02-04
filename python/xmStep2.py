@@ -73,11 +73,9 @@ class xmStep2(threading.Thread):
 			#print repr(bHash)
 			self.prime.Weave(self.pSclass,cHash,nFix,0,byref(xmStep1.switch))
 			nRound = float(self.prime.GetCandidateCount(self.pSclass))
-			for i in range(0,6):
+			for i in range(0,10):
 				nRound *= self.EstimateCandidatePrimeProbability(mul,i)
-			xmStep1.Chain6+=nRound
-			nRound *= self.EstimateCandidatePrimeProbability(mul,7)
-			xmStep1.Chain7+=nRound
+				xmStep1.Chain[i]+=nRound
 			
 			while(1):
 				nTry = self.prime.getNext(self.pSclass,byref(xmStep1.switch))

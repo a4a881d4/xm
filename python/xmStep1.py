@@ -6,8 +6,10 @@ import threading
 import time
 
 switch=c_bool(True)
-Chain7=0.
-Chain6=0.
+Chain=[]
+for i in range(0,10):
+	Chain.append(0)
+
 startTime=time.time()
 
 def uint32(x):
@@ -129,7 +131,7 @@ class xmStep1(threading.Thread):
 			print time.ctime()+" new block"
 			switch=c_bool(True)
 			block=bytearray(self.inQ.get())
-			orgtarget=38
+			orgtarget=27
 			target=orgtarget
 			index=0
 			(nonce,mul)=self.search(block,target)
@@ -138,7 +140,7 @@ class xmStep1(threading.Thread):
 					#print "q len %d" % self.outQ.qsize()
 					if( self.outQ.qsize()>8 ):
 						target=orgtarget-1
-					#	print "target down to %d" % target
+						#print "target down to %d" % target
 					
 					b=bytearray(len(block))			
 					b[:]=block

@@ -31,7 +31,7 @@ class proxySock:
 	def __init__(self):
 		self.HOST = "162.243.41.59"
 		self.PORT = 8336
-		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg.i7"
+		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg.e3"
 		self.PASSWD = "0"
 		self.VERSION_MAJOR = 0
 		self.VERSION_MINOR = 9
@@ -111,8 +111,6 @@ if __name__=='__main__':
 	recvThread=proxyRecv(s,workQ)
 	hashThread=xmStep1.xmStep1(workQ,hashQ)
 	workers=[]
-	lastChain6=0
-	lastChain7=0
 	for i in range(0,7):
 		primeThread=xmStep2.xmStep2(hashQ,chainQ,i)
 		workers.append(primeThread)
@@ -127,17 +125,14 @@ if __name__=='__main__':
 		newcc = int(hprime.test())
 		newcp5 = int(hprime.chain(5))
 		det=time.time()-lasttime
-		detChain6=xmStep1.Chain6-lastChain6
-		detChain7=xmStep1.Chain7-lastChain7
 		print "Test per second:%f" % ((newcc-lastcc)/det)
 		print "Chain 5 per hour:%f" % ((newcp5-lastcp5)/det*3600.)
-		print "Est Chain 6 per hour:%f" % (detChain6/det*3600.)
-		print "Est Chain 7 per hour:%f" % (detChain7/det*3600.)
 		onTime = time.time()-xmStep1.startTime
-		lastChain6=xmStep1.Chain6
-		lastChain7=xmStep1.Chain7
-		print "Est from start Chain 6 per hour:%f" % (lastChain6/onTime*3600.)
-		print "Est from start Chain 7 per hour:%f" % (lastChain7/onTime*3600.)
+		for i in range(0,10):
+			print i+1,
+			print ":",
+			print "%e" % (xmStep1.Chain[i]/onTime*3600.),
+		print " "
 		lastcc=newcc
 		lastcp5=newcp5
 		lasttime=time.time()

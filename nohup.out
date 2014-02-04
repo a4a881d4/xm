@@ -1,0 +1,73 @@
+conect to 162.243.41.59:8336
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+GeneratePrimeTable() : setting nSieveExtensions = 9, nSievePercentage = 10, nSieveSize = 3000000
+GeneratePrimeTable() : prime table [1, 3000000] generated with 216816 primes
+Tue Feb  4 01:15:21 2014 new block
+Test per second:0.000000
+Chain 5 per hour:0.000000
+1 : 0.000000e+00 2 : 0.000000e+00 3 : 0.000000e+00 4 : 0.000000e+00 5 : 0.000000e+00 6 : 0.000000e+00 7 : 0.000000e+00 8 : 0.000000e+00 9 : 0.000000e+00 10 : 0.000000e+00  
+reciev message 
+(0,)
+Block:recv
+Probable prime chain found =55271333245293180249671968589593392052276006282972457321136112722182671739984762158727035185480!!
+ Chain: 1CC:6
+1CC:6 - 6844684 - 1711171 e 1 s 0 - 6844684
+Test per second:68575.321916
+Chain 5 per hour:847.642304
+1 : 2.481260e+07 2 : 2.467215e+06 3 : 2.445690e+05 4 : 2.416907e+04 5 : 2.381149e+03 6 : 2.338760e+02 7 : 2.290137e+01 8 : 2.235722e+00 9 : 2.176000e-01 10 : 2.111489e-02  
+reciev message 
+(1,)
+server return 2
+Probable prime chain found =8430040865508172531994305871756718982778048999445788209561823833879557956222955356290481997588480!!
+ Chain: TWN:6
+TWN:6 - 643447552 - 2513467 e 7 s 808 - 643654400
+Test per second:76626.972430
+Chain 5 per hour:1962.295484
+1 : 2.658945e+07 2 : 2.643421e+06 3 : 2.619887e+05 4 : 2.588583e+04 5 : 2.549818e+03 6 : 2.503963e+02 7 : 2.451447e+01 8 : 2.392748e+00 9 : 2.328388e-01 10 : 2.258925e-02  
+reciev message 
+(1,)
+server return 2
+Probable prime chain found =15250422077308866401627343731491660383857830862012550701613335308662957684029150279417466726750!!
+ Chain: 2CC:6
+2CC:6 - 886211 - 886211 e 0 s 0 - 1772422
+Test per second:77449.220597
+Chain 5 per hour:0.000000
+1 : 2.675510e+07 2 : 2.659784e+06 3 : 2.636000e+05 4 : 2.604401e+04 5 : 2.565297e+03 6 : 2.519065e+02 7 : 2.466136e+01 8 : 2.406991e+00 9 : 2.342157e-01 10 : 2.272195e-02  
+reciev message 
+(1,)
+server return 2
+Probable prime chain found =71661842774181843460551292978649095466016985502903757454237645284583006365500643514214365351020!!
+ Chain: 2CC:6
+2CC:6 - 4963642 - 2481821 e 0 s 0 - 4963642
+Test per second:76795.741047
+Chain 5 per hour:0.000000
+1 : 2.701278e+07 2 : 2.685654e+06 3 : 2.661888e+05 4 : 2.630224e+04 5 : 2.590975e+03 6 : 2.544516e+02 7 : 2.491282e+01 8 : 2.431758e+00 9 : 2.366473e-01 10 : 2.295993e-02  
+reciev message 
+(1,)
+server return 2
+Probable prime chain found =605743090791480521274375128063308652330053404136202916256920918041361663647925349977800217840!!
+ Chain: TWN:7
+TWN:7 - 7035128 - 1758782 e 1 s 0 - 7035128
+Test per second:77724.119106
+Chain 5 per hour:3095.356659
+1 : 2.713190e+07 2 : 2.697870e+06 3 : 2.674365e+05 4 : 2.642916e+04 5 : 2.603833e+03 6 : 2.557493e+02 7 : 2.504327e+01 8 : 2.444822e+00 9 : 2.379508e-01 10 : 2.308951e-02  
+reciev message 
+(1,)
+server return 2
+Probable prime chain found =35670384787475599848589343254341626839466240609046364698540666430175920002482786902333016367406080!!
+ Chain: 2CC:6
+2CC:6 - 1530784256 - 2989813 e 8 s 0 - 1530784256
+Test per second:75941.705925
+Chain 5 per hour:3045.063795
+1 : 2.722521e+07 2 : 2.706611e+06 3 : 2.682489e+05
