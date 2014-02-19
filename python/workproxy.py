@@ -31,7 +31,7 @@ class proxySock:
 	def __init__(self,worker):
 		self.HOST = "162.243.41.59"
 		self.PORT = 8336
-		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg"+worker
+		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg."+worker
 		self.PASSWD = "0"
 		self.VERSION_MAJOR = 0
 		self.VERSION_MINOR = 9

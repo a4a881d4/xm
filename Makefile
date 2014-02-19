@@ -8,7 +8,7 @@ work/sha256_sse2_amd64.o:src/sha256_sse2_amd64.cpp
 	g++ -O3 -fPIC -c -o work/sha256_sse2_amd64.o src/sha256_sse2_amd64.cpp
 
 work/libsha256.so:work/sha256_sse2_amd64.o work/sha256_xmm_amd64.o
-	ld -shared -L /usr/lib/gcc/x86_64-linux-gnu/4.7 -lcrypto -lgmp -lssl -lstdc++ -o work/libsha256.so work/sha256_sse2_amd64.o work/sha256_xmm_amd64.o
+	ld -shared -L /usr/lib/gcc/x86_64-linux-gnu/4.8 -lcrypto -lgmp -lssl -lstdc++ -o work/libsha256.so work/sha256_sse2_amd64.o work/sha256_xmm_amd64.o
 
 work/xmStep2.o:src/xmStep2.cpp
 	g++ -O3 -fPIC -c -o work/xmStep2.o src/xmStep2.cpp
