@@ -28,10 +28,10 @@ class proxyRecv(threading.Thread):
 				
 
 class proxySock:
-	def __init__(self):
+	def __init__(self,worker):
 		self.HOST = "162.243.41.59"
 		self.PORT = 8336
-		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg.e3"
+		self.POOLER = "D687YjhqsJLYiXjYRaneBgpzwhdmYDx6Dg"+worker
 		self.PASSWD = "0"
 		self.VERSION_MAJOR = 0
 		self.VERSION_MINOR = 9
@@ -101,9 +101,10 @@ class proxySock:
 if __name__=='__main__':
 	import xmStep1
 	import xmStep2
+	import sys
 	hprime = CDLL('work/libprime.so')
 		
-	s = proxySock()
+	s = proxySock(sys.argv[1])
 	s.connect()
 	workQ=Queue()
 	hashQ=PriorityQueue()
@@ -111,7 +112,7 @@ if __name__=='__main__':
 	recvThread=proxyRecv(s,workQ)
 	hashThread=xmStep1.xmStep1(workQ,hashQ)
 	workers=[]
-	for i in range(0,7):
+	for i in range(0,int(sys.argv[2])):
 		primeThread=xmStep2.xmStep2(hashQ,chainQ,i)
 		workers.append(primeThread)
 	recvThread.start()
